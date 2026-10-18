@@ -1,0 +1,82 @@
+[
+ {
+  "file": "samples/starry.jpg",
+  "title": "The Starry Night",
+  "kind": "painting",
+  "author": "Vincent van Gogh",
+  "date": "1889",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg"
+ },
+ {
+  "file": "samples/wave.jpg",
+  "title": "The Great Wave off Kanagawa",
+  "kind": "painting",
+  "author": "Katsushika Hokusai",
+  "date": "c. 1831",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Tsunami_by_hokusai_19th_century.jpg"
+ },
+ {
+  "file": "samples/pearl.jpg",
+  "title": "Girl with a Pearl Earring",
+  "kind": "painting",
+  "author": "Johannes Vermeer",
+  "date": "1665",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:1665_Girl_with_a_Pearl_Earring.jpg"
+ },
+ {
+  "file": "samples/sunrise.jpg",
+  "title": "Impression, Sunrise",
+  "kind": "painting",
+  "author": "Claude Monet",
+  "date": "1872",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Monet_-_Impression,_Sunrise.jpg"
+ },
+ {
+  "file": "samples/kiss.jpg",
+  "title": "The Kiss",
+  "kind": "painting",
+  "author": "Gustav Klimt",
+  "date": "1907–1908",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg"
+ },
+ {
+  "file": "samples/moon.jpg",
+  "title": "A Trip to the Moon (1902)",
+  "kind": "film",
+  "author": "Georges Méliès",
+  "date": "1902",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Melies_color_Voyage_dans_la_lune.jpg"
+ },
+ {
+  "file": "samples/metropolis.jpg",
+  "title": "Metropolis (1927)",
+  "kind": "film",
+  "author": "Fritz Lang (dir.); still by Horst von Harbou",
+  "date": "1926",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Metropolis_(1927)_-_Hel.jpg"
+ },
+ {
+  "file": "samples/kid.jpg",
+  "title": "The Kid (1921), Charlie Chaplin",
+  "kind": "film",
+  "author": "Charlie Chaplin / First National (film still)",
+  "date": "1921",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Chaplin_The_Kid.jpg"
+ },
+ {
+  "file": "dingo-cat.png",
+  "title": "Dingo the Siamese cat (guide)",
+  "kind": "guide",
+  "author": "Lucy Lyu",
+  "license": "Original asset",
+  "source": ""
+ }
+]
