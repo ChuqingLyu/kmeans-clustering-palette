@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 260" width="600" height="260"><rect width="600" height="260" fill="#fffcf4"/>
+<g fill="none" stroke="#1f3a5f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M30 40 L190 36 L194 190 L28 194 Z"/><path d="M40 170 C70 120 100 150 120 110 S170 90 185 70"/><circle cx="150" cy="65" r="14"/>
+<path d="M215 115 C250 105 275 125 305 112" /><path d="M296 104 L306 112 L295 121"/>
+<rect x="320" y="70" width="90" height="80" rx="14"/><circle cx="348" cy="102" r="5"/><circle cx="382" cy="102" r="5"/><path d="M350 128 C360 120 372 120 382 128"/>
+<path d="M430 112 C455 100 470 120 490 110"/><path d="M482 102 L491 110 L481 118"/></g>
+<g stroke="#5a4a36" stroke-width="1.5"><rect x="505" y="55" width="70" height="22" rx="6" fill="#33467a"/><rect x="505" y="85" width="70" height="22" rx="6" fill="#d8c25a"/><rect x="505" y="115" width="70" height="22" rx="6" fill="#1e2428"/><rect x="505" y="145" width="70" height="22" rx="6" fill="#8aa0b8"/></g>
+<g font-family='Segoe Print,Bradley Hand,Patrick Hand,cursive' fill="#a0603a" font-size="17"><text x="40" y="225">a painting</text><text x="318" y="182">how does it decide?</text><text x="500" y="200">its palette</text>
+<text x="300" y="40" font-size="20" fill="#1f3a5f">??</text></g></svg>

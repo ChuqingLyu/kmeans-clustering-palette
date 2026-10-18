@@ -1,42 +1,74 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Clustering Palette · K-means + Gaussian Mixtures</title><link rel="stylesheet" href="style.css">
-<style>.sw{display:flex;gap:8px;flex-wrap:wrap}.sw div{flex:1 1 60px;height:56px;border-radius:12px;position:relative;cursor:pointer;border:2px solid transparent}
-.sw div span{position:absolute;bottom:4px;left:6px;font-size:11px;background:rgba(255,255,255,.85);border-radius:6px;padding:0 4px}
-.thumbs img{width:84px;height:64px;object-fit:cover;cursor:pointer;display:inline-block;margin-right:6px;border:2px solid transparent}
-.thumbs img.on{border-color:var(--accent)}#src{cursor:crosshair}.mrow{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:13px}.mrow i{width:18px;height:18px;border-radius:5px;flex:none}
-.mrow .bar{flex:1}.mrow .track{flex:1;background:var(--soft);border-radius:5px}</style></head><body>
-<header><span class="tag">ML · K-means + EM/GMM</span><h1>Clustering Palette</h1><div class="en">How does a computer decide which colors “belong together”? <span class="scribble">I wanted to see for myself.</span></div></header>
+<title>Clustering Palette · A Trip to the Moon</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="sky" aria-hidden="true"></div><div class="grain" aria-hidden="true"></div>
+
+<header class="hero">
+  <div class="herotext">
+    <h1>Clustering Palette</h1>
+    <p class="sub">A palette game about K-means, set inside Georges Méliès’s hand-colored <i>A Trip to the Moon</i> (1902).</p>
+  </div>
+  <figure class="heroframe"><img src="samples/moon-eye.jpg" alt="Hand-colored frame from A Trip to the Moon (1902): the rocket lands in the eye of the Man in the Moon"><figcaption>Le Voyage dans la Lune · Georges Méliès · 1902 · hand-colored print</figcaption></figure>
+</header>
+
 <main>
-<section class="card intro"><div class="introgrid"><div>
-<p>I built this little tool because I kept wondering what a machine actually “sees” when it looks at a painting. You give it a picture and a number <i>k</i>, and it sorts every pixel into <i>k</i> color groups. The first pass is <b>K-means</b>: each pixel has to pick exactly one group, and you get a simple palette with the share of the picture each color covers.</p>
-<p>The second pass is a <b>Gaussian mixture model</b>, fitted with the <b>EM algorithm</b>. It is allowed to hedge — “this spot is 70% blue, 30% purple” — so you can see where the machine is unsure. Honestly, those fuzzy borders are the part I find most interesting, especially with kids: they open up the question of <b>who gets to decide the colors</b>, and whether the machine’s answer is the only one.</p>
-<div class="guide"><img src="dingo-cat.png" alt="Dingo, a Siamese cat, the guide for this page"><div class="bubble">Hi, I’m Dingo! The computer sorts colors into groups — but I have opinions about colors too. Do you agree with it?</div></div></div>
-<figure class="cover"><img src="cover.gif" alt="Animated preview: the k slider moves and the palette regroups live" width="420"><figcaption>Dragging <i>k</i> from 2 to 10 — watch the palette split and regroup.</figcaption></figure></div></section>
-<section class="card"><h2>1. Pick a picture <small>a few of my favorite paintings &amp; old film stills — or bring your own</small></h2>
-<div class="thumbs" id="thumbs"></div><p style="margin-top:10px"><label class="btn" for="file" style="color:#fff">Upload your own</label><input id="file" type="file" accept="image/*" hidden> <span class="muted">Your image is processed only in your browser — nothing is uploaded.</span></p></section>
-<section class="card"><div class="row">
-<div class="col"><h2>Original <small>Tap any pixel</small></h2><canvas id="src"></canvas></div>
-<div class="col"><h2 id="rtitle">Recolored with the palette <small>K-means</small></h2><canvas id="out"></canvas>
-<p style="margin-top:8px"><button class="ghost" id="vk">K-means groups</button> <button class="ghost" id="vu">GMM uncertainty map</button></p></div></div></section>
-<section class="card"><h2>2. The palette <small>K-means, hard clusters · % = share of the picture</small></h2>
-<label>Number of colors: k = <b id="kv">5</b></label><input id="k" type="range" min="2" max="10" value="5">
-<div class="sw" id="sw" style="margin-top:10px"></div><p class="muted" id="stat"></p></section>
-<section class="card tapcard"><div class="row"><div style="flex:0 0 90px"><div id="pix" style="width:80px;height:80px;border-radius:14px;background:#ddd"></div></div>
-<div class="col" id="mem"><p class="muted">Tap anywhere on the original picture to see how sure the AI is about that spot.</p></div></div>
-<p class="flow">K-means makes every pixel pick exactly one color, but the Gaussian mixture (fitted with EM) gives probabilities instead, so a spot can be 70% blue and 30% purple. In the uncertainty map, the brighter areas are where the AI is less sure. And these groups aren’t the same as the colors people notice: big dark areas can take up several slots, while a small bright detail gets merged away. That fuzziness is what I like most, because it lets kids ask who should decide the colors on the border: the machine, the artist, or them.</p></section>
-<section class="card process" id="making-of"><h2>About this project</h2>
-<p class="meta1">October 2026 · solo · Python, scikit-learn, vanilla JS</p>
+<!-- ===== 1. About this project (moved to the top) ===== -->
+<section class="card process teacher" id="about"><span class="forteach">For teachers &amp; reviewers</span><h2>About this project <small>the educator view · the kid-facing guide with Dingo starts below</small></h2>
+<figure class="charsheet"><img src="dingo/dingo_sketch_procreate.png" alt="Screenshot of Procreate on iPad showing the pencil design sketch of Dingo on graph paper: front, 3/4 and side views with proportions, head studies and handwritten labels" loading="lazy"><figcaption>Dingo · character design in Procreate</figcaption></figure>
 <h3>Project overview</h3>
-<p>This is a small tool where an AI groups the colors of a picture with K-means, and then uses EM (a Gaussian mixture) to show where a pixel only <i>partly</i> belongs to a group. I made it because I wanted kids to actually see how an AI “decides” colors, and that it isn’t always sure.</p>
+<p>In this project I designed a small palette game for K-12 kids to help them understand what <b>K-means clustering</b> is. Instead of starting with math, I start with pictures: world-famous artworks and classic film frames. Right now the whole game is set inside one film, the hand-colored version of <i>A Trip to the Moon</i> (1902) by Georges Méliès.</p>
+<p>I chose this because kids respond to things that are visual and artistic. So I ask them to build a color palette from a film frame. The computer sorts every pixel into <i>k</i> color groups (that’s K-means), and the kids can compare its palette with the colors they would pick themselves.</p>
+<p>Dingo, my Siamese-cat guide, is the in-game guide. He walks kids through the whole page step by step, from the hello at the top to the cheer at the end, and tells them what to do at each step.</p>
+<h3>How it works</h3>
+<p>The first pass is <b>K-means</b>: each pixel has to pick exactly one group, and you get a simple palette with the share of the picture each color covers. The second pass is a <b>Gaussian mixture model</b>, fitted with the <b>EM algorithm</b>. It is allowed to hedge (“this spot is 70% red, 30% orange”), so you can see where the machine is unsure.</p>
 <h3>Challenges &amp; how I solved them</h3>
 <div class="chal"><p>My first try in RGB gave muddy colors, so I moved to Lab color space, which is closer to how we see. Clustering every pixel was too slow for a live slider, so now I sample about 6,000 pixels. And I really wanted to show the machine’s doubt, so I added the soft-clustering view with the uncertainty map.</p>
-<figure><img src="process/step2-3-rgb-vs-lab.png" alt="The Starry Night: original, 5 colors in RGB, 5 colors in Lab" loading="lazy"><figcaption>original · RGB · Lab (5 colors)</figcaption></figure></div>
-<h3>What happened with kids</h3>
-<p class="placeholder"><i>[To add: what I saw when kids used this: which questions it sparked, what surprised them.]</i></p>
+<figure><img src="process/step2-3-rgb-vs-lab.png" alt="A Trip to the Moon frame: original, 5 colors clustered in RGB, 5 colors clustered in Lab" loading="lazy"><figcaption><i>A Trip to the Moon</i> (1902) frame · original · K-means in RGB · K-means in Lab (5 colors)</figcaption></figure></div>
 </section>
+
+
+
+<!-- ===== 3. The tool ===== -->
+<div class="guide flip" role="note" aria-label="Dingo, step 2"><span class="peek"><img src="dingo/dingo_pose_question_tilt.png" alt="Dingo tilting his head" loading="lazy"></span><div class="gbubble"><span class="gstep">Dingo · step 2</span>Pick a movie frame on the right. Which has the most colors?</div></div>
+<section class="card tool"><h2>The palette game <small>drag the handle to wipe · tap the picture to inspect a pixel</small></h2>
+<div class="toolgrid">
+  <div class="compare">
+    <div class="guide inline" role="note" aria-label="Dingo, step 3"><span class="peek"><img src="dingo/dingo_happy.png" alt="Dingo leaping" loading="lazy"></span><div class="gbubble"><span class="gstep">Dingo · step 3</span>Drag the handle — spot what changed!</div></div>
+    <div class="ba" id="ba1" data-l="Original" data-r="Recolored with the palette">
+      <canvas id="src"></canvas><canvas id="out" class="top"></canvas>
+      <div class="handle"><span>⇆</span></div><b class="lab l">Original</b><b class="lab r">Recolored · K-means</b>
+    </div>
+    <p class="muted">Left: the original frame. Right: every pixel repainted with its K-means group color.</p>
+  </div>
+  <aside class="picker"><h3>Pick a frame</h3>
+    <div class="thumbs" id="thumbs"></div>
+    <p><label class="btn" for="file">Upload your own</label><input id="file" type="file" accept="image/*" hidden></p>
+    <p class="muted">Your image is processed only in your browser. Nothing is uploaded.</p>
+  </aside>
+</div>
+<div class="guide flip" role="note" aria-label="Dingo, step 4"><span class="peek"><img src="dingo/dingo_thinking.png" alt="Dingo thinking, paw on chin" loading="lazy"></span><div class="gbubble"><span class="gstep">Dingo · step 4</span>Each slice is one paint. Try k = 2, then 10!</div></div>
+<div class="wheelwrap"><canvas id="wheel" width="640" height="640" aria-label="Color wheel: outer ring = palette colors sized by area, inside = sampled pixels placed by hue"></canvas>
+<div class="wheelnote"><h3>The palette wheel</h3><p>The outer ring is the K-means palette: each slice is one color group, sized by how much of the frame it covers. Inside, each dot is a sampled pixel, placed by its <b>hue</b> (angle) and <b>colorfulness</b> (distance from the center). Dots near the middle are greys and browns.</p></div></div>
+<div class="kbox"><label>Number of colors: k = <b id="kv">5</b></label><input id="k" type="range" min="2" max="10" value="5">
+<h3>The palette <small>K-means, hard clusters · % = share of the picture</small></h3>
+<div class="sw" id="sw"></div><p class="muted" id="stat"></p></div>
+</section>
+
+<section class="card"><h2>K-means groups vs. GMM uncertainty <small>drag to compare: sure vs. unsure</small></h2>
+<div class="toolgrid">
+  <div class="compare">
+    <div class="guide inline" role="note" aria-label="Dingo, step 5"><span class="peek"><img src="dingo/dingo_pose_question_tilt.png" alt="Dingo asking a question" loading="lazy"></span><div class="gbubble"><span class="gstep">Dingo · step 5</span>Bright spots = the computer is unsure. Tap one!</div></div>
+    <div class="ba" id="ba2"><canvas id="grp"></canvas><canvas id="unc" class="top"></canvas>
+      <div class="handle"><span>⇆</span></div><b class="lab l">K-means groups</b><b class="lab r">GMM uncertainty map</b></div>
+    <p class="muted">In the uncertainty map, brighter = the Gaussian mixture is less sure which group a pixel belongs to.</p>
+  </div>
+  <aside class="tapcard"><h3>Tap a pixel</h3><div class="row"><div id="pix"></div><div class="col" id="mem"><p class="muted">Tap anywhere on a picture to see how sure the AI is about that spot.</p></div></div></aside>
+</div>
+<p class="flow">K-means makes every pixel pick exactly one color, but the Gaussian mixture (fitted with EM) gives probabilities instead, so a spot can be 70% red and 30% orange. These groups aren’t the same as the colors people notice: big dark areas can take up several slots, while a small bright detail gets merged away. That fuzziness is what I like most, because it lets kids ask who should decide the colors on the border: the machine, the artist, or them.</p>
+</section>
+<div class="guide finale" role="note" aria-label="Dingo, step 6"><span class="peek"><img src="dingo/dingo_pose_hat_toss.png" alt="Dingo tossing his hat in celebration" loading="lazy"></span><div class="gbubble"><span class="gstep">Dingo · step 6</span>You did it! Pick a new frame and try again!</div></div><div class="ledge" aria-hidden="true"></div>
 </main><footer id="cred"></footer>
 <script>
-const $=id=>document.getElementById(id);const W=560;let px=null,lab=null,w=0,h=0,km=null,gm=null,view='k';
+const $=id=>document.getElementById(id);const W=560;let px=null,lab=null,w=0,h=0,km=null,gm=null;
 function s2l(c){c/=255;return c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4)}
 function rgb2lab(r,g,b){r=s2l(r);g=s2l(g);b=s2l(b);let x=(r*.4124+g*.3576+b*.1805)/.95047,y=r*.2126+g*.7152+b*.0722,z=(r*.0193+g*.1192+b*.9505)/1.08883;
 const f=t=>t>.008856?Math.cbrt(t):7.787*t+16/116;x=f(x);y=f(y);z=f(z);return[116*y-16,500*(x-y),200*(y-z)]}
@@ -49,33 +81,48 @@ const C=new Float32Array(k*3);C.set(X.subarray(0,3),0);const D=new Float32Array(
 for(let j=1;j<k;j++){let t=0;for(let i=0;i<S;i++){D[i]=Math.min(D[i],d2(X,i,C,j-1));t+=D[i]}let r=rnd()*t,i=0;for(;i<S-1;i++){r-=D[i];if(r<=0)break}C.set(X.subarray(i*3,i*3+3),j*3)}
 const A=new Int32Array(S);for(let it=0;it<25;it++){for(let i=0;i<S;i++){let b=0,bd=1e18;for(let j=0;j<k;j++){const d=d2(X,i,C,j);if(d<bd){bd=d;b=j}}A[i]=b}
 const s=new Float64Array(k*4);for(let i=0;i<S;i++){const j=A[i];s[j*4]+=X[i*3];s[j*4+1]+=X[i*3+1];s[j*4+2]+=X[i*3+2];s[j*4+3]++}for(let j=0;j<k;j++)if(s[j*4+3])for(let d=0;d<3;d++)C[j*3+d]=s[j*4+d]/s[j*4+3]}
-// representative RGB = mean RGB of members
 const rg=new Float64Array(k*4);for(let i=0;i<S;i++){const p=idx[i],j=A[i];rg[j*4]+=px[p*4];rg[j*4+1]+=px[p*4+1];rg[j*4+2]+=px[p*4+2];rg[j*4+3]++}
 const cols=[],cnt=[];for(let j=0;j<k;j++){const n=rg[j*4+3]||1;cols.push([rg[j*4]/n,rg[j*4+1]/n,rg[j*4+2]/n].map(Math.round));cnt.push(rg[j*4+3]/S)}return{C,cols,cnt,X,A,S}}
 function gmm(k){// EM with diagonal covariance, init from kmeans
 const {X,A,S}=km;const mu=Float64Array.from(km.C),va=new Float64Array(k*3).fill(60),pi=new Float64Array(k).fill(1/k);const R=new Float64Array(S*k);
 for(let i=0;i<S;i++)R[i*k+A[i]]=1;let ll=0;
-for(let it=0;it<30;it++){// M
+for(let it=0;it<30;it++){
 for(let j=0;j<k;j++){let n=0,m=[0,0,0];for(let i=0;i<S;i++){const r=R[i*k+j];n+=r;for(let d=0;d<3;d++)m[d]+=r*X[i*3+d]}n=Math.max(n,1e-6);pi[j]=n/S;for(let d=0;d<3;d++)mu[j*3+d]=m[d]/n;
 let v=[0,0,0];for(let i=0;i<S;i++){const r=R[i*k+j];for(let d=0;d<3;d++){const e=X[i*3+d]-mu[j*3+d];v[d]+=r*e*e}}for(let d=0;d<3;d++)va[j*3+d]=v[d]/n+4}
-ll=0;for(let i=0;i<S;i++)ll+=post(X.subarray(i*3,i*3+3),R,i*k)}// E
+ll=0;for(let i=0;i<S;i++)ll+=post(X.subarray(i*3,i*3+3),R,i*k)}
 function post(x,out,o){let mx=-1e18;const lp=[];for(let j=0;j<k;j++){let s=Math.log(pi[j]);for(let d=0;d<3;d++){const e=x[d]-mu[j*3+d];s-=.5*(e*e/va[j*3+d]+Math.log(2*Math.PI*va[j*3+d]))}lp.push(s);mx=Math.max(mx,s)}
 let z=0;for(const s of lp)z+=Math.exp(s-mx);for(let j=0;j<k;j++)out[o+j]=Math.exp(lp[j]-mx)/z;return mx+Math.log(z)}
 return{post,ll:ll/S}}
 function run(){const k=+$('k').value;$('kv').textContent=k;const t=performance.now();km=kmeans(k);gm=gmm(k);
 $('sw').innerHTML=km.cols.map((c,j)=>`<div style="background:rgb(${c})" title="rgb(${c})"><span>${Math.round(km.cnt[j]*100)}%</span></div>`).join('');
-$('stat').textContent=`K-means + EM ran in ${Math.round(performance.now()-t)} ms on ${km.S} sampled pixels · GMM average log-likelihood ${gm.ll.toFixed(2)}`;draw();}
-function draw(){const c=$('out');c.width=w;c.height=h;const x=c.getContext('2d'),im=x.createImageData(w,h),k=km.cols.length,p=new Float64Array(k);
-for(let i=0;i<w*h;i++){let r,g,b;if(view==='k'){let bj=0,bd=1e18;for(let j=0;j<k;j++){const d=d2(lab,i,km.C,j);if(d<bd){bd=d;bj=j}}[r,g,b]=km.cols[bj]}
-else{gm.post(lab.subarray(i*3,i*3+3),p,0);let H=0;for(const q of p)if(q>1e-9)H-=q*Math.log(q);const v=Math.round(255*Math.min(1,H/Math.log(2)));r=v*.55+20;g=v*.75+25;b=v+40}
-im.data.set([r,g,b,255],i*4)}x.putImageData(im,0,0);$('rtitle').innerHTML=view==='k'?'Recolored with the palette <small>K-means</small>':'GMM uncertainty map <small>Brighter = less sure</small>'}
-$('src').addEventListener('click',e=>{if(!km)return;const r=e.target.getBoundingClientRect();pick(Math.floor((e.clientX-r.left)*w/r.width),Math.floor((e.clientY-r.top)*h/r.height))});
-function pick(x,y){const i=y*w+x,k=km.cols.length,p=new Float64Array(k);gm.post(lab.subarray(i*3,i*3+3),p,0);$('pix').style.background=`rgb(${px[i*4]},${px[i*4+1]},${px[i*4+2]})`;
-const o=[...p].map((v,j)=>[v,j]).sort((a,b)=>b[0]-a[0]);$('mem').innerHTML=o.map(([v,j])=>`<div class="mrow"><i style="background:rgb(${km.cols[j]})"></i><div class="track"><div class="bar" style="width:${(v*100).toFixed(1)}%;background:rgb(${km.cols[j]})"></div></div><b style="width:48px;text-align:right">${(v*100).toFixed(1)}%</b></div>`).join('')+
-`<p class="muted">Most likely the top color — with ${(o[0][0]*100).toFixed(0)}% confidence.</p>`}
-window.pick=pick;$('k').oninput=run;$('vk').onclick=()=>{view='k';draw()};$('vu').onclick=()=>{view='u';draw()};
-$('file').onchange=e=>{const f=e.target.files[0];if(f){document.querySelectorAll('.thumbs img').forEach(t=>t.classList.remove('on'));load(URL.createObjectURL(f))}};
-fetch('credits.json').then(r=>r.json()).catch(()=>[]).then(cr=>{const S=cr.filter(c=>c.file.startsWith('samples/')),def=S.map(c=>c.file);
-$('thumbs').innerHTML=def.map((s,i)=>`<img src="${s}" class="${i?'':'on'}" alt="${S[i].title}" title="${S[i].title}">`).join('');document.querySelectorAll('.thumbs img').forEach(t=>t.onclick=()=>{document.querySelectorAll('.thumbs img').forEach(u=>u.classList.remove('on'));t.classList.add('on');load(t.getAttribute('src'))});
-$('cred').innerHTML='<b>Image credits.</b> '+S.map(c=>`<a href="${c.source}" target="_blank" rel="noopener"><i>${c.title}</i></a> — ${c.author}, ${c.date} (${c.license}, via Wikimedia Commons)`).join('; ')+'. Images resized to ≤1000 px. Dingo illustration: original asset.';load(def[0])});
+$('stat').textContent=`K-means + EM ran in ${Math.round(performance.now()-t)} ms on ${km.S} sampled pixels · GMM average log-likelihood ${gm.ll.toFixed(2)}`;draw();wheel();}
+function wheel(){const c=$('wheel'),x=c.getContext('2d'),R=310,cx=320,cy=320;x.clearRect(0,0,640,640);
+const S=km.S,idx=[];seed=3;for(let i=0;i<2500;i++){const p=Math.floor(rnd()*w*h);const a=lab[p*3+1],b=lab[p*3+2],ch=Math.min(1,Math.hypot(a,b)/90),an=Math.atan2(b,a);x.fillStyle=`rgb(${px[p*4]},${px[p*4+1]},${px[p*4+2]})`;x.beginPath();x.arc(cx+Math.cos(an)*ch*R*.68,cy-Math.sin(an)*ch*R*.68,4,0,7);x.fill()}
+let a0=-Math.PI/2;km.cols.map((c,j)=>[c,km.cnt[j]]).sort((p,q)=>q[1]-p[1]).forEach(([col,f])=>{const a1=a0+f*2*Math.PI;x.beginPath();x.arc(cx,cy,R,a0,a1);x.arc(cx,cy,R*.76,a1,a0,true);x.closePath();x.fillStyle=`rgb(${col})`;x.fill();x.strokeStyle='#0b0f0c';x.lineWidth=3;x.stroke();
+if(f>.04){const m=(a0+a1)/2;x.fillStyle=(col[0]*.3+col[1]*.6+col[2]*.1)>140?'#111':'#f4ead0';x.font='bold 22px Georgia';x.textAlign='center';x.textBaseline='middle';x.fillText(Math.round(f*100)+'%',cx+Math.cos(m)*R*.88,cy+Math.sin(m)*R*.88)}a0=a1});
+x.strokeStyle='rgba(244,234,208,.35)';x.lineWidth=1;x.beginPath();x.arc(cx,cy,R*.68,0,7);x.stroke()}
+function draw(){const k=km.cols.length,p=new Float64Array(k);const ctx=id=>{const c=$(id);c.width=w;c.height=h;return c.getContext('2d')};
+const xo=ctx('out'),xu=ctx('unc'),xg=ctx('grp');const io=xo.createImageData(w,h),iu=xu.createImageData(w,h);
+for(let i=0;i<w*h;i++){let bj=0,bd=1e18;for(let j=0;j<k;j++){const d=d2(lab,i,km.C,j);if(d<bd){bd=d;bj=j}}const [r,g,b]=km.cols[bj];io.data.set([r,g,b,255],i*4);
+gm.post(lab.subarray(i*3,i*3+3),p,0);let H=0;for(const q of p)if(q>1e-9)H-=q*Math.log(q);const v=Math.round(255*Math.min(1,H/Math.log(2)));iu.data.set([v*.9+18,v*.86+22,v*.7+16,255],i*4)}
+xo.putImageData(io,0,0);xg.putImageData(io,0,0);xu.putImageData(iu,0,0)}
+function pick(x,y){if(!km)return;x=Math.max(0,Math.min(w-1,x));y=Math.max(0,Math.min(h-1,y));const i=y*w+x,k=km.cols.length,p=new Float64Array(k);gm.post(lab.subarray(i*3,i*3+3),p,0);$('pix').style.background=`rgb(${px[i*4]},${px[i*4+1]},${px[i*4+2]})`;
+const o=[...p].map((v,j)=>[v,j]).sort((a,b)=>b[0]-a[0]);$('mem').innerHTML=o.map(([v,j])=>`<div class="mrow"><i style="background:rgb(${km.cols[j]})"></i><div class="track"><div class="bar" style="width:${(v*100).toFixed(1)}%;background:rgb(${km.cols[j]})"></div></div><b>${(v*100).toFixed(1)}%</b></div>`).join('')+
+`<p class="muted">Most likely the top color, with ${(o[0][0]*100).toFixed(0)}% confidence.</p>`}
+window.pick=pick;
+/* before/after wipe: drag anywhere moves the handle; a tap without dragging inspects that pixel */
+function wipe(el){let pos=50,down=null,moved=false;const set=v=>{pos=Math.max(0,Math.min(100,v));el.style.setProperty('--p',pos+'%')};set(50);
+const pct=e=>{const r=el.getBoundingClientRect();return (e.clientX-r.left)/r.width*100};
+el.addEventListener('pointerdown',e=>{down=e.clientX;moved=false;el.setPointerCapture(e.pointerId);if(e.target.closest('.handle'))moved=true});
+el.addEventListener('pointermove',e=>{if(down===null)return;if(Math.abs(e.clientX-down)>4)moved=true;if(moved)set(pct(e))});
+el.addEventListener('pointerup',e=>{if(!moved){const r=el.getBoundingClientRect();pick(Math.floor((e.clientX-r.left)*w/r.width),Math.floor((e.clientY-r.top)*h/r.height))}down=null});
+el.tabIndex=0;el.setAttribute('role','slider');el.setAttribute('aria-label','Drag to compare');el.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')set(pos-5);if(e.key==='ArrowRight')set(pos+5)})}
+wipe($('ba1'));wipe($('ba2'));
+$('k').oninput=run;
+$('file').onchange=e=>{const f=e.target.files[0];if(f){document.querySelectorAll('.thumbs button').forEach(t=>t.classList.remove('on'));load(URL.createObjectURL(f))}};
+fetch('credits.json').then(r=>r.json()).catch(()=>[]).then(cr=>{const S=cr.filter(c=>c.file.startsWith('samples/'));
+$('thumbs').innerHTML=S.map((c,i)=>`<button class="${i?'':'on'}" data-src="${c.file}" title="${c.scene}"><img src="${c.file}" alt="${c.scene}"><span>${c.scene}</span></button>`).join('');
+document.querySelectorAll('.thumbs button').forEach(t=>t.onclick=()=>{document.querySelectorAll('.thumbs button').forEach(u=>u.classList.remove('on'));t.classList.add('on');load(t.dataset.src)});
+$('cred').innerHTML='<b>Image credits.</b> All sample frames: <i>A Trip to the Moon (1902)</i> (<i>Le Voyage dans la Lune</i>), directed by Georges Méliès, from the surviving hand-colored print. <ul>'+S.map(c=>`<li>${c.scene}. <i>${c.title}</i>, dir. ${c.author}. ${c.license}. <a href="${c.source}" target="_blank" rel="noopener">Source: Wikimedia Commons</a></li>`).join('')+'</ul>Frames resized to ≤1000 px. Dingo illustration: original asset by Lucy Lyu.';
+if(S.length)load(S[0].file)});
 </script></body></html>
